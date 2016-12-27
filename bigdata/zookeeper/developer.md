@@ -133,8 +133,12 @@ ZooKeeper 的 Java 客户端主要实现在 `org.apache.zookeeper` 和 `org.apac
 ZooKeeper 的 C 客户端包括单线程库和多线程库，多线程库与 Java API 类似，创建 IO 线程和事件线程
 
 ### ZooKeeper 操作指南
-一些有用的建议，避免陷入陷阱：
-
+一些有用的特点和建议，避免陷入陷阱：
+- ZooKeeper 客户端从服务器断开连接时，不会收到通知，如果断开连接期间服务器创建并删除节点，则客户端不会收到任何通知
+- 必须测试 ZooKeeper 服务器故障；只要大多数服务器处于活动状态，ZooKeeper服务就可以幸存下来
+- 客户端使用的 ZooKeeper 服务器列表必须与每个 ZooKeeper 服务器所具有的服务器列表匹配
+- ZooKeeper 最具性能关键的部分是事务日志，ZooKeeper 必须在返回响应之前将事务同步到磁盘
+- 正确设置 Java 最大堆大小，避免磁盘交换是非常重要的；ZooKeeper 中，一切都是有序的，所以如果有一个请求命中磁盘，则队列中所有其他的请求都会命中磁盘
 
 ### 程序结构 demo
 
