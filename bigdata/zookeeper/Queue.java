@@ -7,6 +7,7 @@ import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.List;
 
 public class Queue extends SyncPrimitive {
@@ -85,7 +86,7 @@ public class Queue extends SyncPrimitive {
 		String path = null;
 
 		while(true){
-			synchronized (mutex){
+			synchronized (mutex){           // 即使这样，也可能发生的某进程删除失败的情况，这是正常的情况
 				// 这里设置的监视器是默认的监视器，也就是 Queue 的父类，在 ZooKeeper 客户端构造函数中传入；保证在子节点变化时被通知
 				List<String> list = zk.getChildren(root, true);
 				if(list.size() == 0){
@@ -93,13 +94,17 @@ public class Queue extends SyncPrimitive {
 					mutex.wait();
 				}
 				else {
-					Integer min = new Integer(list.get(0).substring(7));
+					int index = 0, i = 0;
+					Integer min = new Integer(list.get(index).substring(7));
 					for(String s : list){
 						Integer temp = new Integer(s.substring(7));
-						if(temp < min)
+						if(temp < min) {
 							min = temp;
+							index = i;
+						}
+						i++;
 					}
-					path = root + "/element" + min;
+					path = root + "/" + list.get(index);
 					System.out.println("Temporary value: " + path);
 
 					byte[] b = zk.getData(path, false, stat);
