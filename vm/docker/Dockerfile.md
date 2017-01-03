@@ -111,9 +111,3 @@ VOLUME 指令应用于公开由 docker 容器创建的任何数据库存储区�
 ONBUILD 命令在当前 Dockerfile 构建完成后执行。ONBUILD 在从当前镜像派生的任何子镜像中执行。将 ONBUILD 命令视为父 Dockerfile 给子 Dockerfile 的指令  
 Docker build 在子 Dockerfile 中的任何命令之前执行 ONBUILD 命令
 
-
-
-
-
-
-
